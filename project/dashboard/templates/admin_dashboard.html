@@ -1,0 +1,159 @@
+{% extends "users/templates/base.html" %} {% block title %} Admin Dashboard |
+BIH Competence Tracker {% endblock %} {% block content %}
+
+<section class="page-header">
+  <div>
+    <h1>BIH Administrator Dashboard</h1>
+
+    <p class="muted">
+      Manage participant approvals, learning progress and progression.
+    </p>
+  </div>
+</section>
+
+<section class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-label"> Pending Accounts </span>
+
+    <strong> {{ pending_count }} </strong>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label"> Participants </span>
+
+    <strong> {{ participant_count }} </strong>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label"> Active Learning Paths </span>
+
+    <strong> {{ learning_path_count }} </strong>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label"> Ready for Progression </span>
+
+    <strong> {{ progression_ready_count }} </strong>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-header">
+    <h2>Pending Participant Accounts</h2>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Path</th>
+          <th>Requested Level</th>
+          <th>GitHub</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for participant in pending_participants %}
+
+        <tr>
+          <td>{{ participant.user.full_name }}</td>
+
+          <td>{{ participant.user.email }}</td>
+
+          <td>{{ participant.study_path.name }}</td>
+
+          <td>{{ participant.level.name }}</td>
+
+          <td>
+            <a
+              href="{{ participant.github_url }}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          </td>
+
+          <td>
+            <form
+              method="post"
+              action="{% url 'dashboard:approve_participant' participant.id %}"
+              class="inline-form"
+            >
+              {% csrf_token %}
+
+              <button type="submit" class="btn btn-success">Approve</button>
+            </form>
+          </td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+          <td colspan="6">No accounts are waiting for approval.</td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-header">
+    <h2>Participants</h2>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Study Path</th>
+          <th>Level</th>
+          <th>Progress</th>
+          <th>Competence</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for participant in participants %}
+
+        <tr>
+          <td>{{ participant.user.full_name }}</td>
+
+          <td>{{ participant.study_path.name }}</td>
+
+          <td>{{ participant.current_level.name }}</td>
+
+          <td>{{ participant.progress }}%</td>
+
+          <td>{{ participant.competence_score }}%</td>
+
+          <td>
+            <a
+              href="{% url 'dashboard:admin_participant_detail' participant.id %}"
+              class="btn btn-secondary"
+            >
+              View
+            </a>
+          </td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+          <td colspan="6">No active participants.</td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}

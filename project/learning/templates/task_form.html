@@ -1,0 +1,40 @@
+{% extends "users/templates/base.html" %} {% block title %} Create Task | BIH
+Competence Tracker {% endblock %} {% block content %}
+
+<section class="form-page">
+  <div class="form-card">
+    <h1>Set Weekly Task</h1>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="{{ form.title.id_for_label }}"> Task </label>
+
+        {{ form.title }}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.description.id_for_label }}"> Description </label>
+
+        {{ form.description }}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.deadline.id_for_label }}"> Deadline </label>
+
+        {{ form.deadline }}
+      </div>
+
+      <div class="form-actions">
+        <a href="{% url 'learning: task_list' %}" class="btn btn-light">
+          Cancel
+        </a>
+
+        <button type="submit" class="btn btn-primary">Save Task</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

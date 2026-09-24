@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block title %} Pending Approval | BIH Competence
+Tracker {% endblock %} {% block content %}
+
+<section class="status-section">
+  <div class="status-card">
+    <div class="status-icon">⏳</div>
+
+    <h1>Account Pending Approval</h1>
+
+    <p>Your BIH participant account has been created successfully.</p>
+
+    <p class="muted">
+      An administrator must approve your account before you can access learning
+      content, weekly tasks and participant progress features.
+    </p>
+
+    <div class="status-details">
+      <p>
+        <strong>Name:</strong>
+        {{ user.full_name }}
+      </p>
+
+      <p>
+        <strong>Email:</strong>
+        {{ user.email }}
+      </p>
+
+      <p>
+        <strong>Status:</strong>
+
+        <span class="badge badge-warning">{{user.active_status}} </span>
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

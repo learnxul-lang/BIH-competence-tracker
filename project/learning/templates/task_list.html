@@ -1,0 +1,128 @@
+{% extends "users/templates/base.html" %} {% block title %} My Tasks | BIH
+Competence Tracker {% endblock %} {% block content %}
+
+<section class="page-header">
+  <div>
+    <h1>Weekly Tasks</h1>
+
+    <p class="muted">Plan your week and track your learning progress.</p>
+  </div>
+
+  <a href="{% url 'learning: create_task' %}" class="btn btn-primary">
+    Add Weekly Task
+  </a>
+</section>
+
+<section class="card">
+  {% if tasks %} {% for task in tasks %}
+
+  <article class="task-detail-card">
+    <div class="task-detail-header">
+      <div>
+        <h2>{{ task.title }}</h2>
+
+        <p class="muted">Deadline: {{ task.deadline|date:"d M Y H:i" }}</p>
+      </div>
+
+      {% if task.progress == 100 %}
+
+      <span class="badge badge-success"> Completed </span>
+
+      {% elif task.progress > 0 %}
+
+      <span class="badge badge-warning"> In Progress </span>
+
+      {% else %}
+
+      <span class="badge"> Not Started </span>
+
+      {% endif %}
+    </div>
+
+    <p>{{ task.description }}</p>
+
+    <div class="progress">
+      <div class="progress-bar" style="width: {{ task.progress }}%;"></div>
+    </div>
+
+    <p>
+      Progress:
+      <strong>{{ task.progress }}%</strong>
+    </p>
+
+    <form
+      method="post"
+      action="{% url 'learning: update_progress' task.id %}"
+      class="progress-form"
+    >
+      {% csrf_token %}
+
+      <label for="progress-{{ task.id }}"> Update progress </label>
+
+      <input
+        id="progress-{{ task.id }}"
+        type="range"
+        name="progress"
+        min="0"
+        max="100"
+        value="{{ task.progress }}"
+        oninput="
+                            document.getElementById(
+                                'progress-value-{{ task.id }}'
+                            ).textContent = this.value + '%';
+                        "
+      />
+
+      <span id="progress-value-{{ task.id }}"> {{ task.progress }}% </span>
+
+      <button type="submit" class="btn btn-secondary">Update</button>
+    </form>
+
+    <hr />
+
+    <h3>Comments</h3>
+
+    {% for comment in task.comments.all %}
+
+    <div class="comment">
+      <p>{{ comment.comment }}</p>
+
+      <small> {{ comment.created_at|date:"d M Y H:i" }} </small>
+    </div>
+
+    {% empty %}
+
+    <p class="muted">No comments have been added.</p>
+
+    {% endfor %}
+
+    <form
+      method="post"
+      action="{% url 'learning: add_comment' task.id %}"
+      class="comment-form"
+    >
+      {% csrf_token %}
+
+      <textarea
+        name="comment"
+        rows="3"
+        required
+        placeholder="Add a progress comment..."
+      ></textarea>
+
+      <button type="submit" class="btn btn-secondary">Add Comment</button>
+    </form>
+  </article>
+
+  {% endfor %} {% else %}
+
+  <div class="empty-state">
+    <h2>No weekly tasks yet</h2>
+
+    <p>Create your first task to start planning your week.</p>
+  </div>
+
+  {% endif %}
+</section>
+
+{% endblock %}

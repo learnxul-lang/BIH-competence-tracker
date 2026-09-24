@@ -1,0 +1,78 @@
+{% extends "base.html" %} {% block title %} Learning Content | BIH Competence
+Tracker {% endblock %} {% block content %}
+
+<section class="page-header">
+  <div>
+    <h1>{{ learning_path.name }}</h1>
+
+    <p class="muted">Current Level: {{ current_level.name }}</p>
+  </div>
+</section>
+
+{% for topic in topics %}
+
+<section class="card learning-topic">
+  <div class="card-header">
+    <div>
+      <h2>{{ topic.title }}</h2>
+
+      <p class="muted">{{ topic.description }}</p>
+    </div>
+  </div>
+
+  {% for lab in topic.labs.all %}
+
+  <article class="lab-card">
+    <div class="lab-information">
+      <h3>{{ lab.title }}</h3>
+
+      <p>{{ lab.description }}</p>
+    </div>
+
+    <div class="lab-actions">
+      {% if lab.estimate %}
+
+      <span class="badge badge-info">
+        Estimated: {{ lab.estimate.estimated_minutes }} minutes
+      </span>
+
+      {% endif %}
+
+      <form
+        method="post"
+        action="{% url 'learning: set_lab_estimate' lab.id %}"
+        class="estimate-form"
+      >
+        {% csrf_token %}
+
+        <label> Estimated completion time </label>
+
+        <div class="inline-form">
+          <input
+            type="number"
+            name="estimated_minutes"
+            min="1"
+            required
+            placeholder="Minutes"
+          />
+
+          <button type="submit" class="btn btn-secondary">Save</button>
+        </div>
+      </form>
+    </div>
+  </article>
+
+  {% empty %}
+
+  <p class="empty-state">No BIH labs have been added to this topic.</p>
+
+  {% endfor %}
+</section>
+
+{% empty %}
+
+<div class="card empty-state">
+  No learning content has been configured for your current level.
+</div>
+
+{% endfor %} {% endblock %}

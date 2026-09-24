@@ -1,0 +1,70 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}BIH Competence Tracker{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+
+  <body>
+    <header class="main-header">
+      <div class="container navbar">
+        <a href="{% url 'users:home' %}" class="brand">
+          BIH Competence Tracker
+        </a>
+
+        <nav>
+          {% if user.is_authenticated %} {% if user.role == "PARTICIPANT" %}
+          <a href="{% url 'dashboard:participant' %}"> Dashboard </a>
+
+          <a href="{% url 'learning:content_list' %}"> Learning Content </a>
+
+          <a href="{% url 'learning:task_list' %}"> My Tasks </a>
+          {% endif %} {% if user.role == "ADMIN" %}
+          <a href="{% url 'dashboard:admin_dashboard' %}"> Admin Dashboard </a>
+          {% endif %}
+
+          <form
+            method="post"
+            action="{% url 'users:logout' %}"
+            class="logout-form"
+          >
+            {% csrf_token %}
+            <button type="submit" class="link-button">Logout</button>
+          </form>
+
+          {% else %}
+
+          <a href="{% url 'users:login' %}"> Login </a>
+
+          <a href="{% url 'users:register' %}"> Register </a>
+
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% block content %} {% endblock %}
+    </main>
+
+    <footer class="main-footer">
+      <div class="container">
+        <p>&copy; {% now "Y" %} Beacon Innovation Hub</p>
+      </div>
+    </footer>
+
+    {% block scripts %} {% endblock %}
+  </body>
+</html>

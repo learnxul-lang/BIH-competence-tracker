@@ -1,0 +1,99 @@
+{% extends "base.html" %} {% block title %} Register | BIH Competence Tracker {%
+endblock %} {% block content %}
+
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Create Participant Account</h1>
+
+    <p class="muted">
+      Register for the BIH Competence Tracker. Your account will require
+      administrator approval before access is granted.
+    </p>
+
+    <form method="post" action="{% url 'users:register' %}">
+      {% csrf_token %} {% if form.non_field_errors %}
+      <div class="form-errors">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="{{ form.full_name.id_for_label }}"> Full Name </label>
+
+        {{ form.full_name }} {% for error in form.full_name.errors %}
+        <small class="error"> {{ error }} </small>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.email.id_for_label }}"> Email Address </label>
+
+        {{ form.email }} {% for error in form.email.errors %}
+        <small class="error"> {{ error }} </small>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.cellphone.id_for_label }}"> Cellphone </label>
+
+        {{ form.cellphone }} {% for error in form.cellphone.errors %}
+        <small class="error"> {{ error }} </small>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.study_path.id_for_label }}">
+          Field / Study Path
+        </label>
+
+        {{ form.study_path }} {% for error in form.study_path.errors %}
+        <small class="error"> {{ error }} </small>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.level.id_for_label }}"> Level </label>
+
+        {{ form.level }} {% for error in form.level.errors %}
+        <small class="error"> {{ error }} </small>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.github_url.id_for_label }}"> GitHub Profile </label>
+
+        {{ form.github_url }} {% for error in form.github_url.errors %}
+        <small class="error"> {{ error }} </small>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password1.id_for_label }}"> Password </label>
+
+        {{ form.password1 }} {% for error in form.password1.errors %}
+        <small class="error"> {{ error }} </small>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password2.id_for_label }}">
+          Confirm Password
+        </label>
+
+        {{ form.password2 }} {% for error in form.password2.errors %}
+        <small class="error"> {{ error }} </small>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">
+        Create Account
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      Already registered?
+
+      <a href="{% url 'users:login' %}"> Login </a>
+    </p>
+  </div>
+</section>
+
+{% endblock %} {% endblock %}

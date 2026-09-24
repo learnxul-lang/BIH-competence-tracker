@@ -1,0 +1,191 @@
+{% extends 'base.html' %} {% block title %} Dashboard | BIH Competence Tracker
+{% endblock %} {% block content %}
+
+<section class="page-header">
+  <div>
+    <h1>Welcome, {{ request.user.full_name }}</h1>
+
+    <p class="muted">Track your BIH learning progress and weekly activities.</p>
+  </div>
+</section>
+
+<section class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-label"> Study Path </span>
+
+    <strong> {{ enrollment.learning_path.name }} </strong>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label"> Current Level </span>
+
+    <strong> {{ enrollment.current_level.name }} </strong>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label"> Overall Progress </span>
+
+    <strong> {{ overall_progress }}% </strong>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label"> Competence Score </span>
+
+    <strong> {{ competence_score }}% </strong>
+  </div>
+</section>
+
+<section class="dashboard-grid">
+  <div class="card">
+    <div class="card-header">
+      <h2>This Week's Tasks</h2>
+
+      <a href="{% url 'learning:create_task' %}" class="btn btn-primary">
+        Add Task
+      </a>
+    </div>
+
+    {% if weekly_tasks %}
+
+    <div class="task-list">
+      {% for task in weekly_tasks %}
+
+      <article class="task-item">
+        <div>
+          <h3>{{ task.title }}</h3>
+
+          <p class="muted">Deadline: {{ task.deadline|date:"d M Y" }}</p>
+        </div>
+
+        <div class="task-progress">
+          <span> {{ task.progress }}% </span>
+
+          <div class="progress">
+            <div
+              class="progress-bar"
+              style="width: {{ task.progress }}%;"
+            ></div>
+          </div>
+        </div>
+      </article>
+
+      {% endfor %}
+    </div>
+
+    {% else %}
+
+    <p class="empty-state">No tasks have been set for this week.</p>
+
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Level Progression</h2>
+
+    <p>
+      Current Level:
+      <strong> {{ enrollment.current_level.name }} </strong>
+    </p>
+
+    <p>
+      Required Competence:
+      <strong> {{ required_score }}% </strong>
+    </p>
+
+    <p>
+      Current Competence:
+      <strong> {{ competence_score }}% </strong>
+    </p>
+
+    {% if next_level_unlocked %}
+
+    <div class="notice success">Next level unlocked.</div>
+
+    {% else %}
+
+    <div class="notice warning">🔒 Next level remains locked.</div>
+
+    {% endif %}
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-header">
+    <h2>Learning Content</h2>
+
+    <a href="{% url 'learning:content_list' %}"> View all </a>
+  </div>
+
+  {% for topic in topics %}
+
+  <div class="content-row">
+    <div>
+      <strong> {{ topic.title }} </strong>
+
+      <p class="muted">{{ topic.description|truncatewords:15 }}</p>
+    </div>
+
+    <span class="badge badge-info"> {{ topic.lab_count }} Labs </span>
+  </div>
+
+  {% empty %}
+
+  <p>No learning content is available for this level yet.</p>
+
+  {% endfor %}
+</section>
+
+<section class="card">
+  <h2>Previous Tasks</h2>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Deadline</th>
+          <th>Progress</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for task in previous_tasks %}
+
+        <tr>
+          <td>{{ task.title }}</td>
+
+          <td>{{ task.deadline|date:"d M Y" }}</td>
+
+          <td>{{ task.progress }}%</td>
+
+          <td>
+            {% if task.progress == 100 %}
+
+            <span class="badge badge-success"> Completed </span>
+
+            {% elif task.progress > 0 %}
+
+            <span class="badge badge-warning"> In Progress </span>
+
+            {% else %}
+
+            <span class="badge"> Not Started </span>
+
+            {% endif %}
+          </td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+          <td colspan="4">No previous tasks.</td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}
